@@ -1,26 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Request, RequestStatus } from './entities/request.entity';
 import { CreateRequestDto } from './dto/create-request.dto';
-import { UpdateRequestDto } from './dto/update-request.dto';
+import { REQUEST_STATUS_TRANSITIONS } from './request-status-transitions';
 
 @Injectable()
 export class RequestsService {
-  create(createRequestDto: CreateRequestDto) {
-    return 'This action adds a new request';
+  constructor(
+    @InjectRepository(Request)
+    private readonly requestRepository: Repository<Request>,
+  ) {}
+
+  async create(CreateRequestDto: CreateRequestDto) {
+    const request = this.requestRepository.create(CreateRequestDto);
+
+    return this.requestRepository.save(request);
   }
 
-  findAll() {
-    return `This action returns all requests`;
+  async findAll() {
+    return this.requestRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} request`;
+  async findOne(id: number) {
+    return this.requestRepository.findOneBy({ id });
   }
 
-  update(id: number, updateRequestDto: UpdateRequestDto) {
-    return `This action updates a #${id} request`;
-  }
+  async updateStatus(id: number, status: RequestStatus) {
+    const request = await this.requestRepository.findOneBy({ id });
 
-  remove(id: number) {
-    return `This action removes a #${id} request`;
+    if (!request) {
+      throw new NotFoundException(`Request with ID ${id} not found`);
+    }
+
+    if (request.status === status) {
+      throw new BadRequestException(`Request is already in status ${status}`);
+    }
+
+    const allowedTransitions = REQUEST_STATUS_TRANSITIONS[request.status];
+
+    if (!allowedTransitions.includes(status)) {
+      throw new BadRequestException(
+        `Cannot change status from ${request.status} to ${status}`,
+      );
+    }
+
+    request.status = status;
+
+    return this.requestRepository.save(request);
   }
 }

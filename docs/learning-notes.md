@@ -52,3 +52,24 @@ En un monorepo, cada proyecto puede tener su propio `.gitignore` para ignorar lo
 ### Aprendizaje
 
 Git no envía los archivos directamente desde el proyecto hacia un commit. Primero se agregan al **Staging Area** mediante `git add`, donde se seleccionan los cambios que formarán parte del siguiente commit. Solo después de ese paso se crea el commit con `git commit`.
+
+# Entity vs DTO
+
+Hoy entendí que una Entity y un DTO tienen responsabilidades diferentes.
+
+La Entity representa cómo se almacena la información en la base de datos.
+
+El DTO representa únicamente la información que el cliente tiene permitido enviar al backend.
+
+Gracias a esta separación se evita que el usuario pueda modificar campos internos como:
+
+- id
+- status
+- createdAt
+- updatedAt
+
+# Datos del negocio vs Datos de auditoría
+
+Aprendí que startDate y endDate son datos del negocio porque los proporciona el usuario.
+
+En cambio, createdAt y updatedAt son datos de auditoría y deben ser generados automáticamente por TypeORM.
