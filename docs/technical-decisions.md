@@ -149,6 +149,18 @@ La inyección de dependencias desacopla los componentes, evita crear instancias 
 
 ---
 
+## DT-026 - Convención de nombres del dominio
+
+### Decisión
+
+Las clases, propiedades, tablas y demás elementos del código se escribirán en inglés (`Request`, `title`, `status`, `startDate`, etc.). Los textos mostrados al usuario permanecerán en español.
+
+### Justificación
+
+Utilizar inglés en el código mantiene consistencia con el ecosistema de TypeScript, NestJS y TypeORM, facilita la lectura de documentación oficial y sigue las convenciones utilizadas en la mayoría de equipos de desarrollo.
+
+---
+
 # Base de Datos
 
 ## DT-013 - PostgreSQL
