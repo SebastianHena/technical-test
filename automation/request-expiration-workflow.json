@@ -1,0 +1,118 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0cd327da-2d33-48fa-a530-03de78156476",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:3000/requests",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b88b4bca-ee81-4b67-813c-58a56ff894cc",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\n\nreturn items.filter(item => {\n  const request = item.json;\n\n  if (\n    request.status !== 'submitted' &&\n    request.status !== 'in_review'\n  ) {\n    return false;\n  }\n\n  const createdAt = new Date(request.createAt);\n\n  const diffHours =\n    (now - createdAt) / (1000 * 60 * 60);\n\n  return diffHours >= (2 / 60);\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "3cd8262a-5cfc-48bd-b7eb-47177e4d2f46",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://host.docker.internal:3000/requests/{{$json.id}}/status",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"status\": \"expired\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "1fe28580-59ae-477d-96b7-c1fd97a1610c",
+      "name": "HTTP Request1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "33ebc79f-a561-4695-96b8-7524c0c49bfc",
+  "meta": {
+    "instanceId": "a44ee97eaba6bf9e91a535f0803af860c46d889be8ebd6944bd27c8dcd2b7cbf"
+  },
+  "nodeGroups": [],
+  "id": "g0VGu11RjlD0VpLn",
+  "tags": []
+}

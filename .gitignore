@@ -4,3 +4,6 @@
 # Sistema Operativo
 .DS_Store
 Thumbs.db
+
+# N8N
+n8n_data/
