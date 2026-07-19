@@ -1,0 +1,142 @@
+<div class="container">
+
+  <div class="card">
+
+    <h1>Request Management</h1>
+
+    <form [formGroup]="requestForm" (ngSubmit)="createRequest()">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Title</label>
+          <input
+            type="text"
+            formControlName="title"
+            placeholder="Enter title">
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <input
+            type="text"
+            formControlName="description"
+            placeholder="Enter description">
+        </div>
+
+        <div class="form-group">
+          <label>Start Date</label>
+          <input
+            type="date"
+            formControlName="startDate">
+        </div>
+
+        <div class="form-group">
+          <label>End Date</label>
+          <input
+            type="date"
+            formControlName="endDate">
+
+          <div
+            class="error"
+            *ngIf="requestForm.errors?.['invalidDate'] && requestForm.touched">
+            End date cannot be earlier than start date.
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" type="submit">
+          Create Request
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="card">
+
+    <div class="table-header">
+      <h2>Requests</h2>
+      <span>{{ requests.length }} Requests</span>
+    </div>
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let request of requests">
+
+          <td>{{ request.id }}</td>
+
+          <td>{{ request.title }}</td>
+
+          <td>{{ request.description }}</td>
+
+          <td>
+            <span
+              class="status"
+              [ngClass]="request.status">
+              {{ request.status }}
+            </span>
+          </td>
+
+          <td>{{ request.startDate | date:'yyyy-MM-dd' }}</td>
+
+          <td>{{ request.endDate | date:'yyyy-MM-dd' }}</td>
+
+          <td class="buttons">
+
+            <button
+              class="btn-review"
+              *ngIf="request.status === 'submitted'"
+              (click)="changeStatus(request.id, 'in_review')">
+              Review
+            </button>
+
+            <button
+              class="btn-approve"
+              *ngIf="request.status === 'in_review'"
+              (click)="changeStatus(request.id, 'approved')">
+              Approve
+            </button>
+
+            <button
+              class="btn-reject"
+              *ngIf="request.status === 'in_review'"
+              (click)="changeStatus(request.id, 'rejected')">
+              Reject
+            </button>
+
+            <button
+              class="btn-delete"
+              (click)="deleteRequest(request.id)">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

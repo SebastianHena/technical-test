@@ -16,8 +16,16 @@ export class RequestsService {
     private readonly requestRepository: Repository<Request>,
   ) {}
 
-  async create(CreateRequestDto: CreateRequestDto) {
-    const request = this.requestRepository.create(CreateRequestDto);
+  async create(createRequestDto: CreateRequestDto) {
+    if (
+      new Date(createRequestDto.endDate) < new Date(createRequestDto.startDate)
+    ) {
+      throw new BadRequestException(
+        'End date cannot be earlier than start date.',
+      );
+    }
+
+    const request = this.requestRepository.create(createRequestDto);
 
     return this.requestRepository.save(request);
   }
@@ -51,7 +59,7 @@ export class RequestsService {
 
     request.status = status;
 
-    return this.requestRepository.save(request);
+    return await this.requestRepository.save(request);
   }
 
   async remove(id: number) {
