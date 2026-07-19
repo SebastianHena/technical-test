@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { RequestsService } from './requests.service';
 import { CreateRequestDto } from './dto/create-request.dto';
@@ -36,5 +37,13 @@ export class RequestsController {
     @Body() updateStatusDto: UpdateStatusRequestDto,
   ) {
     return this.requestsService.updateStatus(id, updateStatusDto.status);
+  }
+
+  @Delete(':id')
+  remove(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return this.requestsService.remove(id);
   }
 }

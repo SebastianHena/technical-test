@@ -53,4 +53,18 @@ export class RequestsService {
 
     return this.requestRepository.save(request);
   }
+
+  async remove(id: number) {
+    const request = await this.requestRepository.findOneBy({ id });
+
+    if (!request) {
+      throw new NotFoundException(`Request with ID ${id} not found`);
+    }
+
+    await this.requestRepository.remove(request);
+
+    return {
+      message: `Request with ID ${id} deleted successfully`,
+    };
+  }
 }
