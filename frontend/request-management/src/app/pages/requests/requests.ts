@@ -30,6 +30,9 @@ export class Requests implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   requests: Request[] = [];
+  filteredRequests: Request[] = [];
+
+  selectedStatus = 'all';
 
   requestForm = this.fb.group(
     {
@@ -67,10 +70,34 @@ export class Requests implements OnInit {
     this.requestService.getRequests().subscribe({
       next: (data) => {
         this.requests = [...data];
-        this.cdr.detectChanges();
+        this.filterRequests();
       },
       error: (err) => console.error(err),
     });
+  }
+
+  filterRequests(): void {
+
+    if (this.selectedStatus === 'all') {
+      this.filteredRequests = [...this.requests];
+    } else {
+      this.filteredRequests = this.requests.filter(
+        request => request.status === this.selectedStatus
+      );
+    }
+
+    this.cdr.detectChanges();
+
+  }
+
+  onStatusChange(event: Event): void {
+
+    const select = event.target as HTMLSelectElement;
+
+    this.selectedStatus = select.value;
+
+    this.filterRequests();
+
   }
 
   createRequest(): void {
@@ -105,7 +132,7 @@ export class Requests implements OnInit {
           request.id === id ? updatedRequest : request
         );
 
-        this.cdr.detectChanges();
+        this.filterRequests();
 
       },
       error: (err) => {
@@ -125,7 +152,7 @@ export class Requests implements OnInit {
     this.requestService.deleteRequest(id).subscribe({
       next: () => {
         this.requests = this.requests.filter(request => request.id !== id);
-        this.cdr.detectChanges();
+        this.filterRequests();
       },
       error: (err) => console.error(err),
     });

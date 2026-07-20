@@ -48,7 +48,9 @@
       </div>
 
       <div class="actions">
-        <button class="btn-primary" type="submit">
+        <button
+          class="btn-primary"
+          type="submit">
           Create Request
         </button>
       </div>
@@ -60,13 +62,34 @@
   <div class="card">
 
     <div class="table-header">
-      <h2>Requests</h2>
-      <span>{{ requests.length }} Requests</span>
+
+      <h2>Requests ({{ filteredRequests.length }})</h2>
+
+      <div>
+
+        <label for="statusFilter">Status</label>
+
+        <select
+          id="statusFilter"
+          (change)="onStatusChange($event)">
+
+          <option value="all">All</option>
+          <option value="submitted">Submitted</option>
+          <option value="in_review">In Review</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="expired">Expired</option>
+
+        </select>
+
+      </div>
+
     </div>
 
     <table>
 
       <thead>
+
         <tr>
           <th>ID</th>
           <th>Title</th>
@@ -76,11 +99,12 @@
           <th>End</th>
           <th>Actions</th>
         </tr>
+
       </thead>
 
       <tbody>
 
-        <tr *ngFor="let request of requests">
+        <tr *ngFor="let request of filteredRequests">
 
           <td>{{ request.id }}</td>
 
@@ -89,11 +113,15 @@
           <td>{{ request.description }}</td>
 
           <td>
+
             <span
               class="status"
               [ngClass]="request.status">
+
               {{ request.status }}
+
             </span>
+
           </td>
 
           <td>{{ request.startDate | date:'yyyy-MM-dd' }}</td>
